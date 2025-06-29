@@ -1,16 +1,26 @@
 import os
 import streamlit as st
-from openai import OpenAI
 
-# Load API key from environment
-api_key = os.environ["OPENAI_API_KEY"]
-client = OpenAI(api_key=api_key)
+# Load API key
+api_key = os.environ.get("OPENAI_API_KEY")
 
-st.title("BibleGPT - Ask Bible Questions 🙏")
+st.set_page_config(page_title="BibleGPT", page_icon="🙏")
+st.title("Wisdom - Ask your Bible Question")
 
-question = st.text_input("Ask your Bible question:")
+# Show video
+video_path = "vidu-video-2839536230959578.mp4"
+if os.path.exists(video_path):
+    st.video(video_path)
+else:
+    st.warning(f"Video file {video_path} not found.")
+
+# Continue with question input
+question = st.text_input("Enter your Bible question:")
 
 if question:
+    from openai import OpenAI
+    client = OpenAI(api_key=api_key)
+
     with st.spinner("Thinking..."):
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -20,5 +30,5 @@ if question:
             ]
         )
         answer = response.choices[0].message.content
-        st.markdown("**BibleGPT says:**")
+        st.write("**BibleGPT says:**")
         st.write(answer)
